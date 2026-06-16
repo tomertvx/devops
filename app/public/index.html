@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8">
+  <title>Todo App</title>
+</head>
+<body>
+  <h1>רשימת משימות</h1>
+  <input type="text" id="todoInput" placeholder="משימה חדשה...">
+  <button onclick="addTodo()">הוסף</button>
+  <ul id="todoList"></ul>
+
+  <script>
+    async function loadTodos() {
+      const res = await fetch('/api/todos');
+      const todos = await res.json();
+      document.getElementById('todoList').innerHTML =
+        todos.map(t => `<li>${t.text} <button onclick="deleteTodo(${t.id})">מחק</button></li>`).join('');
+    }
+
+    async function addTodo() {
+      const text = document.getElementById('todoInput').value;
+      await fetch('/api/todos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      });
+      loadTodos();
+    }
+
+    async function deleteTodo(id) {
+      await fetch(`/api/todos/${id}`, { method: 'DELETE' });
+      loadTodos();
+    }
+
+    loadTodos();
+  </script>
+</body>
+</html>
