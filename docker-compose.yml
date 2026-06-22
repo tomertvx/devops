@@ -23,28 +23,24 @@ services:
       - db
 
   db:
-    image: mongo:latest
+    image: mysql:8.0
     env_file:
       - .env
     volumes:
-      - mongo-data:/data/db
+      - mysql-data:/var/lib/mysql
     networks:
       - backend-net
 
-  mongo-express:
-    image: mongo-express
+  adminer:
+    image: adminer
     ports:
-      - "8081:8081"
-    env_file:
-      - .env
+      - "8081:8080"
     networks:
       - backend-net
-    depends_on:
-      - db
 
 networks:
   frontend-net:
   backend-net:
 
 volumes:
-  mongo-data:
+  mysql-data:
