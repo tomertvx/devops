@@ -1,0 +1,34 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check for secret files
+        run: |
+          if [ -f ".env" ]; then
+            echo "ERROR: .env file found in repository!"
+            exit 1
+          else
+            echo "OK: No .env file found"
+          fi
+
+      - name: Check HTML title tags
+        run: |
+          for file in $(find public -name "*.html"); do
+            if ! grep -q "<title>" "$file"; then
+              echo "ERROR: Missing <title> tag in $file"
+              exit 1
+            else
+              echo "OK: $file has <title> tag"
+            fi
+          done
